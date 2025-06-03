@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Time Helper</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=4">
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <link rel="icon" type="image/png"
+        href="{{ url_for('static', filename='icons/icon.png') }}">
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="logo">Time Helper</div>
+    <div class="nav-spacer"></div>
+  </nav>
+
+  <main class="container">
+    <!-- controls section -->
+    <section class="panel controls">
+      <h2 class="panel-title">Set Your Event</h2>
+
+      <div class="form-group">
+        <label for="event-time">Event Time</label>
+        <input type="time" id="event-time" class="input-field">
+      </div>
+
+      <div class="form-group">
+        <label>Tasks</label>
+         <ul class="task-list">
+          <li><label><input type="checkbox" value="daily backup"> Daily Backup</label></li>
+          <li><label><input type="checkbox" value="server health check"> Server Health Check</label></li>
+          <li><label><input type="checkbox" value="vulnerability scan"> Vulnerability Scan</label></li>
+          <li><label><input type="checkbox" value="security patch update"> Security Patch Update</label></li>
+          <li><label><input type="checkbox" value="incident response"> Incident Response</label></li>
+          <li><label><input type="checkbox" value="team meeting"> Team Meeting</label></li>
+  </ul>
+</div>
+
+      <button id="go" class="btn btn-primary">Calculate Start</button>
+    </section>
+
+    <!-- output section -->
+    <section id="output" class="panel hidden">
+      <h2 class="panel-title">Your Schedule</h2>
+      <div class="info-row">
+        <span class="info-label">Start at:</span>
+        <span id="start-time" class="info-value"></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Estimated duration:</span>
+        <span class="info-value"><span id="duration"></span> min</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Begin in:</span>
+        <span id="time-left" class="info-value"></span>
+      </div>
+      <button id="start-now" class="btn btn-secondary">Start Now</button>
+    </section>
+
+    <!-- timer section -->
+    <section id="timer-panel" class="panel hidden">
+      <h2 class="panel-title">Task In Progress</h2>
+      <div class="progress-container">
+        <div class="progress-bar"><div id="progress"></div></div>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Current task:</span>
+        <span id="current-task" class="info-value"></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Time left:</span>
+        <span id="time-left-task" class="info-value"></span>
+      </div>
+      <button id="done" class="btn btn-primary">Im Done</button>
+    </section>
+
+    <section id="actual-times" class="panel"></section>
+
+    <!-- charts section -->
+    <section class="charts">
+      <div id="bar-chart" class="chart-box"></div>
+      <div id="accuracy-chart" class="chart-box"></div>
+      <div id="pie-chart" class="chart-box"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>Stacy Hilliard</p>
+    </div>
+  </footer>
+
+  <script src="{{ url_for('static', filename='script.js') }}?v=4"></script>
+</body>
+</html>
