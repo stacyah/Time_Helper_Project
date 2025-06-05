@@ -83,25 +83,52 @@ def compute_accuracy_series():
 
     rows.sort(key=lambda r: r[0])
 
-    sums = {}
-    counts = {}
-    for (dt, t, dur) in rows:
-        sums[t] = sums.get(t, 0.0) + dur
-        counts[t] = counts.get(t, 0) + 1
-
-    overall_means = {t: (sums[t] / counts[t] if counts[t] > 0 else 0.0) for t in sums}
 
     by_date = {}
-    for (dt, t, dur) in rows:
+    for dt, task, dur in rows:
         d = dt.date()
-        by_date.setdefault(d, []).append((t, dur))
+        by_date.setdefault(d, []).append((task, dur))
 
     series = []
+    running_sums = {}
+    running_counts = {}
+
+    # go through each date in order
     for d in sorted(by_date):
-        actual = sum(dur for (_, dur) in by_date[d])
-        predicted = sum(overall_means.get(t, 0.0) for (t, _) in by_date[d])
-        acc = round((1 - abs(predicted - actual) / actual), 3) if actual > 0 else 0.0
-        series.append({'ts': d.strftime('%Y-%m-%d'), 'accuracy': acc})
+        prior_means = {}
+        for t in running_sums:
+            count = running_counts.get(t, 0)
+            if count > 0:
+                prior_means[t] = running_sums[t] / count
+            else:
+                prior_means[t] = 0.0
+
+        predicted_total = 0.0
+        for task, _ in by_date[d]:
+            predicted_total += prior_means.get(task, 0.0)
+
+        # get actual total time on date d
+        actual_total = sum(dur for (_, dur) in by_date[d])
+
+        # compute accuracy
+        if not running_sums:
+            acc = 0.0
+        else:
+            if actual_total > 0:
+                diff = abs(predicted_total - actual_total)
+                acc = round(1 - (diff / actual_total), 3)
+            else:
+                acc = 0.0
+
+        series.append({
+            'ts': d.strftime('%Y-%m-%d'),
+            'accuracy': acc
+        })
+
+        # update sums and counts to include date d’s data
+        for task, dur in by_date[d]:
+            running_sums[task] = running_sums.get(task, 0.0) + dur
+            running_counts[task] = running_counts.get(task, 0) + 1
 
     return series
 
